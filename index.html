@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stopwatch</title>
+    <style>
+        body {
+            background-color: black;
+            font-family: 'Poppins', sans-serif;
+            color: red;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #stopwatch {
+            background-color: rgb(224, 208, 208);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        #time {
+            font-size: 2rem;
+        }
+
+        #controls {
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="stopwatch">
+        <div id="time">00:00</div>
+        <div id="controls">
+            <button id="startButton" onclick="startStopwatch()">Start</button>
+            <button id="resetButton" onclick="resetStopwatch()" disabled>Reset</button>
+        </div>
+    </div>
+
+    <script>
+        let startTime = 0;
+        let interval;
+        let isRunning = false;
+
+        function startStopwatch() {
+            if (!isRunning) {
+                isRunning = true;
+                document.getElementById("startButton").textContent = "Pause";
+                document.getElementById("resetButton").disabled = false;
+                startTime = Date.now() - (startTime || 0);
+                interval = setInterval(updateTime, 10);
+            } else {
+                isRunning = false;
+                document.getElementById("startButton").textContent = "Resume";
+                clearInterval(interval);
+            }
+        }
+
+        function resetStopwatch() {
+            isRunning = false;
+            clearInterval(interval);
+            document.getElementById("startButton").textContent = "Start";
+            document.getElementById("resetButton").disabled = true;
+            startTime = 0;
+            updateTime();
+        }
+
+        function updateTime() {
+            const elapsed = startTime ? Date.now() - startTime : 0;
+            const minutes = Math.floor((elapsed / 60000) % 60);
+            const seconds = Math.floor((elapsed / 1000) % 60);
+            const milliseconds = elapsed % 1000;
+            document.getElementById("time").textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(milliseconds).padStart(3, '0')}`;
+        }
+
+        // Voice commands using Web Speech API
+        const recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+
+        recognition.onresult = function (event) {
+            const command = event.results[event.results.length - 1][0].transcript.toLowerCase();
+
+            if (command.includes('start') && !isRunning) {
+                startStopwatch();
+            } else if ((command.includes('pause') || command.includes('stop')) && isRunning) {
+                startStopwatch();
+            } else if (command.includes('reset')) {
+                resetStopwatch();
+            }
+        };
+
+        recognition.start();
+    </script>
+</body>
+</html>

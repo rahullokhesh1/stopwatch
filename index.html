@@ -39,23 +39,14 @@
             cursor: pointer;
             margin-right: 10px;
         }
-
-        #voice-button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px;
-            color: red;
-        }
     </style>
 </head>
 <body>
     <div id="stopwatch">
         <div id="time">00:00</div>
-        <div id "controls">
+        <div id="controls">
             <button id="startButton" onclick="startStopwatch()">Start</button>
             <button id="resetButton" onclick="resetStopwatch()" disabled>Reset</button>
-            <button id="voice-button" onclick="startVoiceRecognition()">&#128265;</button>
         </div>
     </div>
 
@@ -117,9 +108,8 @@
             }
         };
 
-        function startVoiceRecognition() {
-            recognition.start();
-        }
+        // Automatically start voice recognition when the page loads
+        recognition.start();
     </script>
 </body>
 </html>
